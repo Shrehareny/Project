@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Animated Registration Form</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        body {
+            min-height: 100vh;
+            background: linear-gradient(120deg, #667eea, #764ba2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: "Segoe UI", sans-serif;
+        }
+        .main-box {
+            width: 90%;
+            max-width: 1100px;
+            background: #fff;
+            border-radius: 18px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+            overflow: hidden;
+            display: flex;
+        }
+        .left, .right {
+            padding: 40px;
+            width: 50%;
+        }
+        .right {
+            background: #f7f9ff;
+            border-left: 1px solid #ddd;
+        }
+        .error {
+            color: red;
+            font-size: 14px;
+            margin-top: 5px;
+        }
+        @media (max-width: 768px) {
+            .main-box { flex-direction: column; }
+            .left, .right { width: 100%; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="main-box">
+
+<div class="left">
+<h3 class="text-center mb-4">Registration Form</h3>
+
+<form id="registerForm">
+    <div class="mb-3">
+        <label class="form-label">Name</label>
+        <input type="text" id="name" class="form-control" required>
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Email</label>
+        <input type="text" id="email" class="form-control" required>
+        <div id="emailError" class="error"></div>
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Password</label>
+        <input type="password" id="password" class="form-control" required>
+    </div>
+
+    <button type="submit" class="btn btn-primary w-100">Register</button>
+</form>
+</div>
+
+<div class="right">
+<h4 class="mb-3">Registered Details</h4>
+<div id="list"></div>
+</div>
+
+</div>
+
+<script>
+let list = document.getElementById("list");
+let emailInput = document.getElementById("email");
+let emailError = document.getElementById("emailError");
+
+let editDiv = null;
+let regId = 101;   // ✅ AUTO-INCREMENT REGISTRATION ID
+
+// EMAIL VALIDATION
+function validateEmail(email) {
+    if (email.includes(" ")) return false;
+    if (!email.includes("@")) return false;
+    let at = email.indexOf("@");
+    let dot = email.lastIndexOf(".");
+    if (dot < at + 2 || dot === email.length - 1) return false;
+    return true;
+}
+
+emailInput.addEventListener("input", function () {
+    emailError.textContent = validateEmail(emailInput.value)
+        ? ""
+        : "Invalid email (example: name@gmail.com)";
+});
+
+document.getElementById("registerForm").addEventListener("submit", function(e) {
+    e.preventDefault();
+
+    let name = document.getElementById("name").value;
+    let email = emailInput.value;
+    let password = document.getElementById("password").value;
+
+    if (!validateEmail(email)) {
+        emailError.textContent = "Please enter a valid email address";
+        return;
+    }
+
+    // EDIT MODE (ID REMAINS SAME)
+    if (editDiv) {
+        editDiv.querySelector(".name").textContent = name;
+        editDiv.querySelector(".email").textContent = email;
+
+        editDiv = null;
+        this.reset();
+        return;
+    }
+
+    // CREATE NEW RECORD
+    let currentId = regId++;   // use then increment
+
+    let div = document.createElement("div");
+    div.className = "alert alert-success mt-3";
+
+    div.innerHTML = `
+        <p><strong>Name:</strong> <span class="name">${name}</span></p>
+        <p><strong>Email:</strong> <span class="email">${email}</span></p>
+        <p><strong>Registration ID:</strong> <span class="reg">${currentId}</span></p>
+        <button class="btn btn-warning btn-sm me-2">Edit</button>
+        <button class="btn btn-danger btn-sm">Delete</button>
+    `;
+
+    // EDIT BUTTON WITH WARNING
+    div.children[3].onclick = function() {
+        if (confirm("Are you sure you want to edit this record?")) {
+            editDiv = div;
+            document.getElementById("name").value =
+                div.querySelector(".name").textContent;
+            emailInput.value =
+                div.querySelector(".email").textContent;
+            document.getElementById("password").value = "";
+        }
+    };
+
+    // DELETE BUTTON WITH WARNING
+    div.children[4].onclick = function() {
+        if (confirm("Are you sure you want to delete this record?")) {
+            div.remove();
+        }
+    };
+
+    list.appendChild(div);
+    document.getElementById("registerForm").reset();
+    emailError.textContent = "";
+});
+</script>
+
+</body>
+</html>
