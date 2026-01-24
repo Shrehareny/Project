@@ -1,11 +1,12 @@
 pipeline {
     agent any
-
     stages {
-
         stage('Checkout') {
             steps {
-                checkout scm
+                checkout([$class: 'GitSCM',
+                    branches: [[name: '*/main']],
+                    userRemoteConfigs: [[url: 'https://github.com/Shrehareny/Project.git']]
+                ])
             }
         }
 
@@ -22,34 +23,21 @@ pipeline {
         }
 
         stage('Run Other JS Files') {
-            options {
-                timeout(time: 15, unit: 'MINUTES')   // ⏱ time limit
-            }
             steps {
-                parallel(
-                    Admin: {
-                        bat 'node admin.js'
-                    },
-                    Home: {
-                        bat 'node home.js'
-                    },
-                    User: {
-                        bat 'node user.js'
-                    },
-                    UserDashboard: {
-                        bat 'node userdash.js'
-                    }
-                )
+                timeout(time: 60, unit: 'MINUTES') {
+                    parallel (
+                        Admin: { bat 'start /B node admin.js' },
+                        Home: { bat 'start /B node home.js' },
+                        User: { bat 'start /B node user.js' },
+                        UserDashboard: { bat 'start /B node userdash.js' }
+                    )
+                }
             }
         }
     }
-
     post {
-        failure {
-            echo '❌ Pipeline failed or timed out'
-        }
-        success {
-            echo '✅ Pipeline completed successfully'
+        always {
+            echo "✅ Pipeline finished"
         }
     }
 }
