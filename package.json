@@ -1,0 +1,31 @@
+{
+  "name": "nm-project",
+  "version": "1.0.0",
+  "description": "My first GitHub repository",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "bcrypt": "^6.0.0",
+    "body-parser": "^2.2.2",
+    "cors": "^2.8.6",
+    "express": "^5.2.1",
+    "express-session": "^1.18.2",
+    "mongoose": "^9.1.5",
+    "multer": "^2.0.2",
+    "mysql2": "^3.16.1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Shrehareny/Project.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Shrehareny/Project/issues"
+  },
+  "homepage": "https://github.com/Shrehareny/Project#readme"
+}
