@@ -2,6 +2,7 @@ pipeline {
     agent any
 
     stages {
+
         stage('Checkout') {
             steps {
                 checkout scm
@@ -21,12 +22,34 @@ pipeline {
         }
 
         stage('Run Other JS Files') {
-            steps {
-                bat 'node admin.js'
-                bat 'node home.js'
-                bat 'node user.js'
-                bat 'node userdash.js'
+            options {
+                timeout(time: 15, unit: 'MINUTES')   // ⏱ time limit
             }
+            steps {
+                parallel(
+                    Admin: {
+                        bat 'node admin.js'
+                    },
+                    Home: {
+                        bat 'node home.js'
+                    },
+                    User: {
+                        bat 'node user.js'
+                    },
+                    UserDashboard: {
+                        bat 'node userdash.js'
+                    }
+                )
+            }
+        }
+    }
+
+    post {
+        failure {
+            echo '❌ Pipeline failed or timed out'
+        }
+        success {
+            echo '✅ Pipeline completed successfully'
         }
     }
 }
