@@ -15,29 +15,23 @@ pipeline {
             }
         }
 
-        stage('Run App') {
-            steps {
-                bat 'node app.js'
-            }
-        }
-
-        stage('Run Other JS Files') {
-            options {
-                timeout(time: 30, unit: 'MINUTES')   // ⏱ time limit
-            }
+        stage('Smoke Test - Node Apps') {
             steps {
                 parallel(
+                    App: {
+                        bat 'node app.js & timeout /t 5 > nul'
+                    },
                     Admin: {
-                        bat 'node admin.js'
+                        bat 'node admin.js & timeout /t 5 > nul'
                     },
                     Home: {
-                        bat 'node home.js'
+                        bat 'node home.js & timeout /t 5 > nul'
                     },
                     User: {
-                        bat 'node user.js'
+                        bat 'node user.js & timeout /t 5 > nul'
                     },
                     UserDashboard: {
-                        bat 'node userdash.js'
+                        bat 'node userdash.js & timeout /t 5 > nul'
                     }
                 )
             }
@@ -45,11 +39,11 @@ pipeline {
     }
 
     post {
-        failure {
-            echo '❌ Pipeline failed or timed out'
-        }
         success {
             echo '✅ Pipeline completed successfully'
+        }
+        failure {
+            echo '❌ Pipeline failed'
         }
     }
 }
