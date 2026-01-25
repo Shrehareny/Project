@@ -19,19 +19,34 @@ pipeline {
             steps {
                 parallel(
                     App: {
-                        bat 'node app.js & timeout /t 5 > nul'
+                        bat '''
+                        start "" node app.js
+                        timeout /t 5
+                        '''
                     },
                     Admin: {
-                        bat 'node admin.js & timeout /t 5 > nul'
+                        bat '''
+                        start "" node admin.js
+                        timeout /t 5
+                        '''
                     },
                     Home: {
-                        bat 'node home.js & timeout /t 5 > nul'
+                        bat '''
+                        start "" node home.js
+                        timeout /t 5
+                        '''
                     },
                     User: {
-                        bat 'node user.js & timeout /t 5 > nul'
+                        bat '''
+                        start "" node user.js
+                        timeout /t 5
+                        '''
                     },
                     UserDashboard: {
-                        bat 'node userdash.js & timeout /t 5 > nul'
+                        bat '''
+                        start "" node userdash.js
+                        timeout /t 5
+                        '''
                     }
                 )
             }
